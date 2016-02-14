@@ -1,5 +1,5 @@
 # Nustack
-Nustack is a stack-oriented concatenative programming language with support for high-level modular programming.
+Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.
 
 ## Installing.
 Installing Nustack is easy. Just download this repository to your computer as a zip, extract the contents to a folder called nustack that is on the module search path.
