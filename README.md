@@ -1,6 +1,6 @@
-# Nustack
-
 [![Join the chat at https://gitter.im/BookOwl/nustack](https://badges.gitter.im/BookOwl/nustack.svg)](https://gitter.im/BookOwl/nustack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+# Nustack
 Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.
 
 ## Installing.
