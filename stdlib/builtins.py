@@ -1,11 +1,9 @@
 #!python3
-# Nustack Standard Library
+"Nustack Standard Library\nYou don't need to import this, it is loaded automatically."
 import os
 import importlib
-from nustack.tokenize import Token
+from nustack.extensionbase import Module, Token
 import nustack.interpreter
-
-class NotDefinedError(Exception): pass
 
 class ScopeWrapper:
     def __init__(self, s):
@@ -15,72 +13,80 @@ class ScopeWrapper:
     def __repr__(self):
         return "ScopeWrapper: " + repr(self.scope)
 
-def getword(name):
-    def notImplimented(env):
-        raise NotDefinedError("%s doesn't exist!" % name)
-    try:
-        return builtins[name]
-    except KeyError:
-        return notImplimented
-builtins = {}
+module = Module("builtins")
 
-def register(*names):
-    def dec(f):
-        for name in names:
-            builtins[name] = f
-        return f
-    return dec
-
-@register("show")
-def show(env):
+@module.register("show")
+def show(env) -> "(a -- )":
     "Shows the top of the stack"
     thing = env.stack.pop()
-    print(thing.val)
+    if thing.type == "lit_bool":
+        s = "#t" if thing.val else "#f"
+    else:
+        s = thing.val
+    print(s)
 
-@register("peek")
-def peek(env):
+@module.register("peek")
+def peek(env) -> "(a -- a)":
     "Shows the top of the stack without popping it."
     thing = env.stack.pop()
-    print(thing.val)
+    if thing.type == "lit_bool":
+        s = "#t" if thing.val else "#f"
+    else:
+        s = thing.val
+    print(s)
     env.stack.push(thing)
 
-@register("peek.repr")
-def peek(env):
-    "Shows the top of the stack without popping it."
+@module.register("show.repr")
+def showr(env) -> "(a -- a)":
+    "Shows the top of the stack and its type"
     thing = env.stack.pop()
-    print(thing)
+    if thing.type == "lit_bool":
+        s = "#t" if thing.val else "#f"
+    else:
+        s = thing.val
+    print("%s: %s" % (thing.type, s))
+
+@module.register("peek.repr")
+def peekr(env) -> "(a -- a)":
+    "Shows the top of the stack and its type without popping it."
+    thing = env.stack.pop()
+    if thing.type == "lit_bool":
+        s = "#t" if thing.val else "#f"
+    else:
+        s = thing.val
+    print("%s: %s" % (thing.type, s))
     env.stack.push(thing)
 
-@register("+", "add")
-def plus(env):
+@module.register("+", "add")
+def plus(env) -> "(n n -- n)":
     "Adds two numbers"
     a, b = env.stack.popN(2)
     t = a.type
     env.stack.push(Token(t, a.val + b.val))
 
-@register("-", "sub")
-def sub(env):
+@module.register("-", "sub")
+def sub(env) -> "(n n -- n)":
     "Subtracts 2 numbers"
     a, b = env.stack.popN(2)
     t = a.type
     env.stack.push(Token(t, a.val - b.val))
 
-@register("*", "mul")
-def mul(env):
+@module.register("*", "mul")
+def mul(env) -> "(n n -- n)":
     'Multiplies 2 numbers'
     a, b = env.stack.popN(2)
     t = a.type
     env.stack.push(Token(t, a.val * b.val))
 
-@register("/", "div")
-def div(env):
+@module.register("/", "div")
+def div(env) -> "(n n -- n)":
     'Divides 2 numbers'
     a, b = env.stack.popN(2)
     t = a.type
     env.stack.push(Token(t, a.val / b.val))
 
-@register("if")
-def if_(env):
+@module.register("if")
+def if_(env) -> "(b c c -- )":
     'Performs if branching'
     b, t, f = env.stack.popN(3)
     if b.val:
@@ -88,14 +94,14 @@ def if_(env):
     else:
         env.eval(f.val)
 
-@register("define", "def")
-def define(env):
+@module.register("define", "def")
+def define(env) -> "(a s -- )":
     'Defines a value in the current scope'
     val, name = env.stack.popN(2)
     env.scope.assign(name.val, val)
 
-@register("show.scopes")
-def show_scopes(env):
+@module.register("show.scopes")
+def show_scopes(env) -> "( -- )":
     'Shows the current scopes'
     from pprint import pprint
     print("Scopes")
@@ -103,8 +109,58 @@ def show_scopes(env):
         pprint(s)
         print()
 
-@register("importnu")
-def impnu(env):
+@module.register("input", "in")
+def input_(env) -> "(a -- s)":
+    'Shows a, prompts for input, and returns it as a string'
+    a = env.stack.pop().val
+    s = input(a)
+    env.stack.push(Token("lit_string", s))
+
+@module.register("to.string")
+def to_string(env) -> "(a -- s)":
+    'Pops a value a from the stack and converts it to a string'
+    a = env.stack.pop()
+    if a.type == 'lit_code':
+        a = "Code: %s" % str(a.val)
+    else:
+        a = a.val
+    v = str(a)
+    env.stack.push(Token("lit_string", v))
+
+@module.register("to.int")
+def to_string(env) -> "(a -- i)":
+    'Pops a value a from the stack and converts it to an int'
+    a = env.stack.pop().val
+    v = int(a)
+    env.stack.push(Token("lit_int", v))
+
+@module.register("to.float")
+def to_string(env) -> "(a -- f)":
+    'Pops a value a from the stack and converts it to a float'
+    a = env.stack.pop().val
+    v = float(a)
+    env.stack.push(Token("lit_float", v))
+
+@module.register("to.symbol")
+def to_string(env) -> "(a -- sym)":
+    'Pops a value a from the stack and converts it to a symbol'
+    a = env.stack.pop().val
+    if a.type == 'lit_code':
+        a = "Code.%s" % str(a.val)
+    else:
+        a = a.val
+    v = str(a)
+    env.stack.push(Token("lit_symbol", v))
+
+@module.register("to.bool")
+def to_string(env) -> "(a -- b)":
+    'Pops a value a from the stack and converts it to a bool'
+    a = env.stack.pop().val
+    v = bool(a)
+    env.stack.push(Token("lit_bool", v))
+
+@module.register("importnu")
+def impnu(env) -> "(sym -- )":
     'Import Nustack module'
     curdir = env.getDir()
     name = env.stack.pop().val
@@ -120,8 +176,8 @@ def impnu(env):
     except IOError as e:
         raise e
 
-@register("importext")
-def impext(env):
+@module.register("importext")
+def impext(env) -> "(sym -- )":
     'Import extension module'
     name = env.stack.pop().val
     if name.startswith("std::"):

@@ -27,6 +27,9 @@ elif len(sys.argv) == 2:
         interp.run(code, file=fname)
     except KeyboardInterrupt:
         pass
+    except Exception as e:
+        print("--ERROR--")
+        print("%s - %s" % (e.__class__.__name__, str(e)))
 else:
     print("Nustack v%s Interactive Prompt" % nustack.version)
     print("Press Ctrl-Z + Enter to exit.\nPress Ctrl-C to stop any running code and go back to the prompt.")

@@ -132,7 +132,7 @@ class Interpreter:
                     val = self.scope.lookup(valname[0])
                 except ScopeLookupError:
                     # If it's not defined by the program, it might be a builtin. If it's not, the builtins module will raise a NotDefinedError
-                    f = builtins.getword(valname[0])
+                    f = builtins.module.get(valname[0])
                     f(self)
                 else:
                     # The scope lookup completed without an error

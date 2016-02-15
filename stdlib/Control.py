@@ -1,11 +1,13 @@
+"Control - Extra control flow tools\nImport with `std::Control importext"
 from nustack.extensionbase import Module, Token
 
-module = Module()
+module = Module('std::Control')
 
 shouldbreak = False
 
 @module.register("forever")
-def forever(env):
+def forever(env) -> "(c -- )":
+    "Executes a code object repeatedly forever"
     global shouldbreak
     code = env.stack.pop().val
     while True:
@@ -15,12 +17,14 @@ def forever(env):
         env.eval(code)
 
 @module.register("break")
-def break_(env):
+def break_(env) -> "( -- )":
+    "Breaks out of a loop"
     global shouldbreak
     shouldbreak = True
 
 @module.register("while")
-def while_(env):
+def while_(env) -> "(c c -- )":
+    "Pops two code objects. While running the first code object results in #t, the second code object is run."
     global shouldbreak
     cond, code = env.stack.popN(2)
     while True:
