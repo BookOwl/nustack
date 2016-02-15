@@ -85,6 +85,31 @@ def div(env) -> "(n n -- n)":
     t = a.type
     env.stack.push(Token(t, a.val / b.val))
 
+@module.register("eq", "=")
+def eq_(env) -> "(a1 a2 -- b)":
+    "Returns true if the top two values on the stack equal each other"
+    a, b = env.stack.popN(2)
+    eq = a.type == b.type and a.val == b.val
+    env.stack.push(Token("lit_bool", eq))
+
+@module.register("not")
+def not_(env) -> "(b1 -- b)":
+    "Returns true if b1 and b2 are true"
+    b1 = env.stack.pop()
+    env.stack.push(Token("lit_bool", not b1.val))
+
+@module.register("or", "|")
+def or_(env) -> "(b1 b2 -- b)":
+    "Returns true if b1 or b2 are true"
+    b1, b2 = env.stack.popN(2)
+    env.stack.push(Token("lit_bool", b1.val or b2.val))
+
+@module.register("and", "&")
+def and_(env) -> "(b1 b2 -- b)":
+    "Returns true if b1 and b2 are true"
+    b1, b2 = env.stack.popN(2)
+    env.stack.push(Token("lit_bool", b1.val and b2.val))
+
 @module.register("if")
 def if_(env) -> "(b c c -- )":
     'Performs if branching'
@@ -128,21 +153,21 @@ def to_string(env) -> "(a -- s)":
     env.stack.push(Token("lit_string", v))
 
 @module.register("to.int")
-def to_string(env) -> "(a -- i)":
+def to_int(env) -> "(a -- i)":
     'Pops a value a from the stack and converts it to an int'
     a = env.stack.pop().val
     v = int(a)
     env.stack.push(Token("lit_int", v))
 
 @module.register("to.float")
-def to_string(env) -> "(a -- f)":
+def to_float(env) -> "(a -- f)":
     'Pops a value a from the stack and converts it to a float'
     a = env.stack.pop().val
     v = float(a)
     env.stack.push(Token("lit_float", v))
 
 @module.register("to.symbol")
-def to_string(env) -> "(a -- sym)":
+def to_symbol(env) -> "(a -- sym)":
     'Pops a value a from the stack and converts it to a symbol'
     a = env.stack.pop().val
     if a.type == 'lit_code':
@@ -153,11 +178,34 @@ def to_string(env) -> "(a -- sym)":
     env.stack.push(Token("lit_symbol", v))
 
 @module.register("to.bool")
-def to_string(env) -> "(a -- b)":
+def to_bool(env) -> "(a -- b)":
     'Pops a value a from the stack and converts it to a bool'
     a = env.stack.pop().val
     v = bool(a)
     env.stack.push(Token("lit_bool", v))
+
+@module.register("swap")
+def swap(env) -> "(a1 a2 -- a2 a1)":
+    "Swaps the two things on top of the stack"
+    a, b = env.stack.popN(2)
+    env.stack.push(b, a)
+
+@module.register("drop")
+def drop(env) -> "(a -- )":
+    "Pops the top of the stack"
+    env.stack.pop()
+
+@module.register("dup")
+def dub(env) -> "(a -- a a)":
+    "Duplicates the top of the stack"
+    a = env.stack.pop()
+    env.stack.push(a, a)
+
+@module.register("over")
+def over(env) -> "(a1 a2 -- a1 a2 a1)":
+    "Adds the item next to the top of the stack to the top of the stack"
+    a, b = env.stack.popN(2)
+    env.stack.push(a, b, a)
 
 @module.register("importnu")
 def impnu(env) -> "(sym -- )":

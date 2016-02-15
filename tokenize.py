@@ -13,12 +13,29 @@ CALL    = re.compile(r"[%s]+" % LEGAL_IDS)
 
 class TokenizeError(Exception): pass
 
+def addescapes(s):
+    escapes = {
+    r"\\": "\\",
+    r"\'": "'",
+    r'\"': '"',
+    r"\b": "\b",
+    r"\n": "\n",
+    r"\r": "\r",
+    r"\t": "\t",
+    r"\v": "\v",
+    }
+    for (k,v) in escapes.items():
+        s = s.replace(k,v)
+    return s
+
 class Token:
     def __init__(self, type, val):
         self.type = type
         self.val  = val
-    def __repr__(self):
+    def __str__(self):
         return "Token(type=%s, val=%s)" % (repr(self.type), repr(self.val),)
+    def __repr__(self):
+        return repr(self.val)
 
 def tokenize(code):
     tokens = []
@@ -57,6 +74,7 @@ def tokenize(code):
         elif stringmatch:
             span = stringmatch.span()[1]
             s = code[:span]
+            s = addescapes(s)
             tokens.append(Token("lit_string", s[1:-1]))
             code = code[span:]
         elif code[0] == "[":

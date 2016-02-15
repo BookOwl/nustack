@@ -30,6 +30,8 @@ elif len(sys.argv) == 2:
     except Exception as e:
         print("--ERROR--")
         print("%s - %s" % (e.__class__.__name__, str(e)))
+        if input("Raise error? (y/n) ") in "yY":
+            raise
 else:
     print("Nustack v%s Interactive Prompt" % nustack.version)
     print("Press Ctrl-Z + Enter to exit.\nPress Ctrl-C to stop any running code and go back to the prompt.")
@@ -51,3 +53,5 @@ else:
         except Exception as e:
             print("--ERROR--")
             print("%s - %s" % (e.__class__.__name__, str(e)))
+            if input("Raise error? (y/n) ") in "yY":
+                raise
