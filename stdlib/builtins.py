@@ -242,3 +242,23 @@ def impext(env) -> "(sym -- )":
         except ImportError:
             m = importlib.import_module("nustack.stdlib.%s" % name)
     env.scope.assign(name, m.module)
+
+@module.register("importext*")
+def impext_star(env) -> "(sym -- )":
+    'Import extension module into current scope'
+    name = env.stack.pop().val
+    if name.startswith("std::"):
+        usestd = True
+        name = name[5:]
+    else:
+        usestd = False
+    name = ".".join(name.split("::"))
+    if usestd:
+        m = importlib.import_module("nustack.stdlib.%s" % name)
+    else:
+        try:
+            m = importlib.import_module("nu_ext_" + name)
+        except ImportError:
+            m = importlib.import_module("nustack.stdlib.%s" % name)
+    for (k,v) in m.module.contents.items():
+        env.scope.assign(k,v)

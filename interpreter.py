@@ -156,6 +156,8 @@ class Interpreter:
                             # Else, we got a iteral and we should push it on the stack
                             self.stack.push(val)
                     # Otherwise, we just directly handle the value
+                    elif type(val) == types.FunctionType:
+                        val(self)
                     elif val.type != "lit_code":
                         # If the value is not code, push it to the stack
                         self.stack.push(val)
