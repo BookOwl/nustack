@@ -21,3 +21,9 @@ def ctime(env) -> "(n -- s)":
     "Converts n, the number of seconds since the epoch to a human readable time string"
     n = env.stack.pop().val
     env.stack.push(Token("lit_string", time.ctime(n)))
+
+@module.register("timestr")
+def timestr(env) -> "( -- s)":
+    "Returns a human readable time string"
+    n = env.stack.pop().val
+    env.stack.push(Token("lit_string", time.ctime()))

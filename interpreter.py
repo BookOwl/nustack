@@ -146,7 +146,7 @@ class Interpreter:
                         if type(val) == types.FunctionType:
                             # If the final value is a function, we call it. This is how extension modules work
                             val(self)
-                        elif val.type == "lit_code":
+                        elif type(val) == tokenize.Token and val.type == "lit_code":
                             # We got a Nustack function, so we should call it.
                             topscope = self.scope.getGlobal(top)
                             self.scope.pushScope(topscope.scope)
@@ -159,6 +159,8 @@ class Interpreter:
                     elif type(val) == types.FunctionType:
                         # If we get a python function, we need to call it.
                         val(self)
+                    elif type(val) != tokenize.Token:
+                        self.stack.push(val)
                     elif val.type != "lit_code":
                         # If the value is not code, push it to the stack
                         self.stack.push(val)

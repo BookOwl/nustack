@@ -18,3 +18,6 @@ class Module:
             return self.contents[name]
         except KeyError:
             raise NotDefinedError("%s is not defined in module %s!" % (name, self.modname))
+    def __str__(self):
+        import pprint
+        return "Nustack Extension Module %s\nContents:\n%s" % (self.modname, pprint.pformat(self.contents))
