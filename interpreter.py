@@ -79,7 +79,7 @@ class Interpreter:
         if '.' in os.path.basename(self.file):
             return os.path.dirname(self.file)
         else:
-            return env.file
+            return self.file
 
     def run(self, code, file=None):
         if not file:
@@ -157,6 +157,7 @@ class Interpreter:
                             self.stack.push(val)
                     # Otherwise, we just directly handle the value
                     elif type(val) == types.FunctionType:
+                        # If we get a python function, we need to call it.
                         val(self)
                     elif val.type != "lit_code":
                         # If the value is not code, push it to the stack

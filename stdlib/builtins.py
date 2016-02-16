@@ -207,6 +207,36 @@ def over(env) -> "(a1 a2 -- a1 a2 a1)":
     a, b = env.stack.popN(2)
     env.stack.push(a, b, a)
 
+
+@module.register("import")
+def import_(env) -> "(sym -- )":
+    name = env.stack.pop().val
+    curdir = env.getDir()
+    pth = "/".join(name.split("::"))
+    try:
+        f = open(os.path.join(curdir, pth) + ".nu", "r")
+        code = f.read()
+        f.close()
+        interp = nustack.interpreter.Interpreter()
+        _, s = interp.run(code)
+        scope = ScopeWrapper(s)
+        env.scope.assign(name, scope)
+    except IOError as e:
+        if name.startswith("std::"):
+            usestd = True
+            name = name[5:]
+        else:
+            usestd = False
+        name = ".".join(name.split("::"))
+        if usestd:
+            m = importlib.import_module("nustack.stdlib.%s" % name)
+        else:
+            try:
+                m = importlib.import_module("nu_ext_" + name)
+            except ImportError:
+                m = importlib.import_module("nustack.stdlib.%s" % name)
+        env.scope.assign(name, m.module)
+
 @module.register("importnu")
 def impnu(env) -> "(sym -- )":
     'Import Nustack module'
