@@ -1,5 +1,5 @@
 #!python3
-"Seq - Sequence operations\nImport with `std::List importext"
+"Seq - Sequence operations\nImport with `std::Seq import"
 
 from nustack.extensionbase import Module, Token
 module = Module("std::Seq")

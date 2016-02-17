@@ -253,18 +253,18 @@ def while_(env) -> "(c c -- )":
         env.eval(code.val)
 
 @module.register("do.while")
-def while_(env) -> "(c c -- )":
+def do_while_(env) -> "(c c -- )":
     '''Pops two code objects. While running the first code object results in #t, the second code object is run.
     The second code object is run at least once.'''
     global shouldbreak
     cond, code = env.stack.popN(2)
+    env.eval(code.val)
     while True:
         env.eval(cond.val)
         if not env.stack.pop().val or shouldbreak:
             shouldbreak = False
             break
         env.eval(code.val)
-
 
 @module.register("import", "imp")
 def import_(env) -> "(sym -- )":

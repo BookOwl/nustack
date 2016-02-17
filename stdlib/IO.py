@@ -1,5 +1,5 @@
 #!python3
-"IO - basic file IO\nImport with `std::IO importext"
+"IO - basic file IO\nImport with `std::IO import"
 import os.path
 from nustack.extensionbase import Module, Token
 

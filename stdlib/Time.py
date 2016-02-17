@@ -1,5 +1,5 @@
 #!python3
-"Time - time wrapper for Nustack\nImport with`std::Time importext"
+"Time - time wrapper for Nustack\nImport with`std::Time import"
 import time
 from nustack.extensionbase import Module, Token
 
