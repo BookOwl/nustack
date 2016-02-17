@@ -32,9 +32,11 @@ class Token:
     def __init__(self, type, val):
         self.type = type
         self.val  = val
-    def __str__(self):
-        return "Token(type=%s, val=%s)" % (repr(self.type), repr(self.val),)
+    # def __str__(self):
+    #     return "Token(type=%s, val=%s)" % (repr(self.type), repr(self.val),)
     def __repr__(self):
+        if self.type == 'lit_list':
+            return "[ " + ' '.join(map(str, self.val)) + " ]"
         return repr(self.val)
 
 def tokenize(code):

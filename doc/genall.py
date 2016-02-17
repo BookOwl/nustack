@@ -1,7 +1,7 @@
 #!python3
 import os, glob, sys
 import nustack.stdlib
-import gen
+import nustack.doc.gen as gen
 
 exportdir = sys.argv[1]
 

@@ -49,3 +49,79 @@ def set_nth(env) -> "(sequence a n -- sequence)":
     else:
         seq.val[n.val] = a
         env.stack.push(seq)
+
+@module.register("for.each")
+def for_each(env) -> "(sequence c -- )":
+    "Calls a code object for each item of a sequence"
+    seq, code = env.stack.popN(2)
+    for item in seq.val:
+        if isinstance(item, Token):
+            env.stack.push(item)
+        else:
+            env.stack.push(Token("lit_any", item))
+        env.eval(code.val)
+
+@module.register("map")
+def map_(env) -> "(sequence1 c -- sequence2)":
+    "Maps a code object over each item of a sequence and collects the results as a new list."
+    seq, code = env.stack.popN(2)
+    res = []
+    for item in seq.val:
+        if isinstance(item, Token):
+            env.stack.push(item)
+        else:
+            env.stack.push(Token("lit_any", item))
+        env.eval(code.val)
+        res.append(env.stack.pop())
+    env.stack.push(Token("lit_list", res))
+
+@module.register("filter")
+def filter_(env) -> "(sequence1 c -- sequence2)":
+    "Filters a sequence."
+    seq, code = env.stack.popN(2)
+    res = []
+    for item in seq.val:
+        if isinstance(item, Token):
+            item = item
+        else:
+            item = Token("lit_any", item)
+        env.stack.push(item)
+        env.eval(code.val)
+        cond = env.stack.pop().val
+        if cond:
+            res.append(item)
+    env.stack.push(Token("lit_list", res))
+
+@module.register("reduce")
+def reduce_(env) -> "(sequence1 a c -- a)":
+    "Reduces a sequence to a single value"
+    seq, start, code = env.stack.popN(3)
+    for item in seq.val:
+        if isinstance(item, Token):
+            item = item
+        else:
+            item = Token("lit_any", item)
+        env.stack.push(start, item)
+        env.eval(code.val)
+        start = env.stack.pop()
+    env.stack.push(start)
+
+@module.register("reverse")
+def reverse_(env) -> "(sequence1 -- sequence2)":
+    "Reverses a sequence"
+    seq = env.stack.pop()
+    rev = seq.val[::-1]
+    env.stack.push(Token(seq.type, rev))
+
+@module.register("range")
+def range_(env) -> "(n n -- l)":
+    start, stop = env.stack.popN(2)
+    step = 1 if start.val < stop.val else -1
+    res = [Token("lit_int", i) for i in range(start.val, stop.val, step)]
+    env.stack.push(Token("lit_list", res))
+
+@module.register("range.step")
+def range_step(env) -> "(n n -- l)":
+    start, stop, step = env.stack.popN(3)
+    res = [Token("lit_int", i) for i in range(start.val, stop.val, step.val)]
+    env.stack.push(Token("lit_list", res))

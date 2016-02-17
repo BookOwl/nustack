@@ -29,6 +29,8 @@ def show(env) -> "(a -- )":
         print(thing)
     elif thing.type == "lit_bool":
         print("#t" if thing.val else "#f")
+    elif thing.type == "lit_list":
+        print(repr(thing))
     else:
         print(thing.val)
 
@@ -40,6 +42,8 @@ def peek(env) -> "(a -- a)":
         print(thing)
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
+    elif thing.type == "lit_list":
+        s = repr(thing)
     else:
         s = thing.val
     print(s)
@@ -53,6 +57,8 @@ def showr(env) -> "(a -- a)":
         print(thing)
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
+    elif thing.type == "lit_list":
+        s = repr(thing)
     else:
         s = thing.val
     print("%s: %s" % (thing.type, s))
@@ -65,6 +71,8 @@ def peekr(env) -> "(a -- a)":
         print(thing)
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
+    elif thing.type == "lit_list":
+        s = repr(thing)
     else:
         s = thing.val
     print("%s: %s" % (thing.type, s))
@@ -95,14 +103,23 @@ def mul(env) -> "(n n -- n)":
 def div(env) -> "(n n -- n)":
     'Divides 2 numbers'
     a, b = env.stack.popN(2)
-    t = a.type
-    env.stack.push(Token(t, a.val / b.val))
+    env.stack.push(Token("lit_float", a.val / b.val))
+
+@module.register("%", "mod")
+def div(env) -> "(n n -- n)":
+    'Returns the modulo of 2 numbers'
+    a, b = env.stack.popN(2)
+    env.stack.push(Token("lit_float", a.val % b.val))
 
 @module.register("eq", "=")
 def eq_(env) -> "(a1 a2 -- b)":
     "Returns true if the top two values on the stack equal each other"
     a, b = env.stack.popN(2)
-    eq = a.type == b.type and a.val == b.val
+    if a.type in ("lit_int", "lit_float") and b.type in ("lit_int", "lit_float"):
+        # Numbers can be equal even if they are of different types.
+        eq = a.val == b.val
+    else:
+        eq = a.type == b.type and a.val == b.val
     env.stack.push(Token("lit_bool", eq))
 
 @module.register("not")
