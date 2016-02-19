@@ -34,8 +34,29 @@ class Token:
         self.val  = val
 
     def __eq__(self, other):
-        return self.type == other.type and self.val == other.val
+        if self.type in ("lit_int", "lit_float") and other.type in ("lit_int", "lit_float"):
+            # Numbers can be equal even if they are of different types.
+            eq = self.val == other.val
+        else:
+            eq = self.type == other.type and self.val == other.val
+        return eq
 
+    def __lt__(self, other):
+        if self.type in ("lit_int", "lit_float") and other.type in ("lit_int", "lit_float"):
+            # Numbers can be equal even if they are of different types.
+            eq = self.val < other.val
+        else:
+            eq = self.type == other.type and self.val < other.val
+        return eq
+
+    def __gt__(self, other):
+        if self.type in ("lit_int", "lit_float") and other.type in ("lit_int", "lit_float"):
+            # Numbers can be equal even if they are of different types.
+            eq = self.val > other.val
+        else:
+            eq = self.type == other.type and self.val > other.val
+        return eq
+    
     def __hash__(self):
         return hash(self.type) & hash(tuple(self.val))
 

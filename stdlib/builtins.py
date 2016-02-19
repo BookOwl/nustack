@@ -116,12 +116,28 @@ def div(env) -> "(n n -- n)":
 def eq_(env) -> "(a1 a2 -- b)":
     "Returns true if the top two values on the stack equal each other"
     a, b = env.stack.popN(2)
-    if a.type in ("lit_int", "lit_float") and b.type in ("lit_int", "lit_float"):
-        # Numbers can be equal even if they are of different types.
-        eq = a.val == b.val
-    else:
-        eq = a.type == b.type and a.val == b.val
+    eq = a == b
     env.stack.push(Token("lit_bool", eq))
+
+@module.register("lt", "<")
+def lt_(env) -> "(a1 a2 -- b)":
+    "Returns true if a1 < a2"
+    a, b = env.stack.popN(2)
+    try:
+        val = a < b
+    except TypeError:
+        val = False
+    env.stack.push(Token("lit_bool", val))
+
+@module.register("gt", ">")
+def lt_(env) -> "(a1 a2 -- b)":
+    "Returns true if a1 > a2"
+    a, b = env.stack.popN(2)
+    try:
+        val = a > b
+    except TypeError:
+        val = False
+    env.stack.push(Token("lit_bool", val))
 
 @module.register("not")
 def not_(env) -> "(b1 -- b)":
