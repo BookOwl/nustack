@@ -5,7 +5,7 @@ import re, pprint
 LEGAL_IDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-./:;<=>?@\\^_|~'
 COMMENT = re.compile(r"(?:/\*.+?\*/)|(?:[ \t\n\r\x0b\x0c]+)", re.DOTALL)
 INT     = re.compile(r"(?:-)?\d+(?!\.)")
-FLOAT   = re.compile(r"(?:-)\d*\.\d+")
+FLOAT   = re.compile(r"(?:-)?\d*\.\d+")
 BOOL    = re.compile("#t|#f")
 STRING  = re.compile(r"('.*?(?<!\\)')|(\".*?(?<!\\)\")")
 SYMBOL  = re.compile(r"`[%s]+" % LEGAL_IDS)
@@ -56,7 +56,7 @@ class Token:
         else:
             eq = self.type == other.type and self.val > other.val
         return eq
-    
+
     def __hash__(self):
         return hash(self.type) & hash(tuple(self.val))
 
