@@ -1,11 +1,10 @@
 #!python3
-from nustack import version
 from setuptools import setup, find_packages
 
 setup(
     name='nustack',
 
-    version=version,
+    version="0.1.0",
 
     description='Nustack programming langusge',
     long_description="Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration",
@@ -33,5 +32,5 @@ setup(
 
     keywords='nustack programming language',
 
-    packages=find_packages(),
+    packages=find_packages()
 )

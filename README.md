@@ -5,7 +5,7 @@ Nustack is a stack-oriented concatenative programming language with support for 
 For an excellent introduction to concatenative programming, please see http://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matters.html?m=1
 
 ## Installing.
-Installing Nustack is easy. Just run `pip install nustack` at a command prompt.
+Installing Nustack is easy. ~~Just run `pip install nustack` at a command prompt.~~ The version on Pypi is broken. To install, clone this repository and put the contents in a folder called nustack that is on your module search path.
 
 Nustak is compatible with Python 3.
 ## Running
