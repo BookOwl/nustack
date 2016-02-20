@@ -50,6 +50,19 @@ def set_nth(env) -> "(sequence a n -- sequence)":
         seq.val[n.val] = a
         env.stack.push(seq)
 
+@module.register("append")
+def append(env) -> "(sequence a -- sequence)":
+    "Appends a datum to a sequence"
+    seq, a  = env.stack.popN(2)
+    seq.val.append(a)
+    env.stack.push(seq)
+
+@module.register("pop")
+def pop(env) -> "(sequence --  a)":
+    "Pops an item from the end of a sequence"
+    seq = env.stack.pop()
+    env.stack.push(seq.val.pop())
+
 @module.register("reverse")
 def reverse_(env) -> "(sequence1 -- sequence2)":
     "Reverses a sequence"

@@ -254,6 +254,13 @@ def over(env) -> "(a1 a2 -- a1 a2 a1)":
     a, b = env.stack.popN(2)
     env.stack.push(a, b, a)
 
+
+@module.register("rot")
+def rot(env) -> "(a1 a2 a3 -- a2 a3 a1)":
+    "Rotates the top 3 items on the stack"
+    a1, a2, a3 = env.stack.popN(3)
+    env.stack.push(a2, a3, a1)
+
 shouldbreak = False
 
 @module.register("for.each")
@@ -265,6 +272,13 @@ def for_each(env) -> "(sequence c -- )":
             env.stack.push(item)
         else:
             env.stack.push(Token("lit_any", item))
+        env.eval(code.val)
+
+@module.register("repeat.n")
+def for_each(env) -> "(cn -- )":
+    "Calls c n times"
+    code, n = env.stack.popN(2)
+    for i in range(n.val):
         env.eval(code.val)
 
 @module.register("map")

@@ -20,7 +20,8 @@ class Stack:
     def pop(self):
         if len(self) == 0:
             raise StackUnderflowError("Stack is empty!")
-        return self._stack.pop()
+        thing = self._stack.pop()
+        return thing
 
     def popN(self, n):
         pops = reversed([self.pop() for _ in range(n)])
