@@ -106,6 +106,7 @@ class Interpreter:
         else:
             toks = code
         for tok in toks:
+            #print(tok)
             # Push any literals to the stack
             if tok.type.startswith("lit_"):
                 self.stack.push(tok)

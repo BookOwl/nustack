@@ -125,7 +125,6 @@ def dot(env) -> "(turtle n -- turtle)":
 def write(env) -> "(turtle s -- turtle)":
     "Writes s at the current turtle position"
     t, s, size = env.stack.popN(3)
-    print(("Arial", size.val, "normal"))
     t.val.write(s.val, font=("Arial", size.val, "normal"))
     env.stack.push(t)
 
@@ -136,21 +135,79 @@ def speed(env) -> "(turtle n -- turtle)":
     t.val.speed(n.val)
     env.stack.push(t)
 
-@module.register("hide")
+@module.register("hide.turtle")
 def hide(env) -> "(turtle -- turtle)":
     "Hides the turtle"
     t = env.stack.pop()
     t.val.ht()
     env.stack.push(t)
 
-@module.register("show")
+@module.register("show.turtle")
 def show(env) -> "(turtle -- turtle)":
     "Shows the turtle"
     t = env.stack.pop()
     t.val.st()
     env.stack.push(t)
 
+@module.register("clear")
+def clear(env) -> "(turtle -- turtle)":
+    "Clears a turtle's drawings"
+    t = env.stack.pop()
+    t.val.clear()
+    env.stack.push(t)
+
+@module.register("set.shape")
+def speed(env) -> "(turtle s -- turtle)":
+    'Sets the shape of the turtle to s, which should be one of “arrow”, “turtle”, “circle”, “square”, “triangle”, “classic”'
+    t, s = env.stack.popN(2)
+    t.val.shape(s.val)
+    env.stack.push(t)
+
+@module.register("turtle.size")
+def speed(env) -> "(turtle n -- turtle)":
+    "Sets the sizeof the turtle to n"
+    t, n = env.stack.popN(2)
+    t.val.turtlesize(n.val)
+    env.stack.push(t)
+
+@module.register("on.turtle.click")
+def on_click(env) -> "(turtle c i -- turtle)":
+    "Runs the code object when ever the turtle is clicked with the mouse button given by i"
+    t, c, i = env.stack.popN(3)
+    def callback(x, y):
+        env.stack.push(Token("lit_float", x), Token("lit_float", y))
+        env.eval(c.val)
+    t.val.onclick(callback, i.val)
+
+@module.register("on.screen.click")
+def on_click(env) -> "(turtle c i -- turtle)":
+    "Runs the code object when ever the screene is clicked with the mouse button given by i"
+    screen, c, i = env.stack.popN(3)
+    def callback(x, y):
+        env.stack.push(Token("lit_float", x), Token("lit_float", y))
+        env.eval(c.val)
+    screen.val.onclick(callback, i.val)
+
+@module.register("text.input")
+def text_input(env) -> "(title prompt -- s)":
+    "Prompts for a string"
+    title, prompt = env.stack.popN(2)
+    res = turtle.textinput(title.val, prompt.val)
+    env.stack.push(Token("lit_string", res if type(res) == str else ""))
+
+@module.register("number.input")
+def number_input(env) -> "(title prompt -- n)":
+    "Prompts for a number"
+    title, prompt = env.stack.popN(2)
+    res = turtle.numinput(title.val, prompt.val)
+    env.stack.push(Token("lit_float", res if type(res) == float else 0))
+
 @module.register("done")
 def done(env) -> "( -- )":
     "Starts turtle graphics main loop. Must be last function run"
     turtle.done()
+
+@module.register("bye")
+def bye(env) -> "( -- )":
+    "Shuts down the turtlegraphics window."
+    turtle.bye()
