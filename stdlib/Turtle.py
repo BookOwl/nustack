@@ -19,6 +19,7 @@ def Turtle(env) -> "( -- turtle)":
 
 @module.register("Screen")
 def Screen(env) -> "( -- screen)":
+    'Returns the Screen used by the turtles.'
     start()
     "Returns the Screen used by turtles"
     s = Token("lit_screen", turtle.Screen())
@@ -116,7 +117,7 @@ def set_dir(env) -> "(turtle n -- turtle)":
 
 @module.register("dot")
 def dot(env) -> "(turtle n -- turtle)":
-    "Creates a dot of size n"
+    "Draws a dot of size n"
     t, n = env.stack.popN(2)
     t.val.dot(n.val)
     env.stack.push(t)
@@ -158,7 +159,7 @@ def clear(env) -> "(turtle -- turtle)":
 
 @module.register("set.shape")
 def speed(env) -> "(turtle s -- turtle)":
-    'Sets the shape of the turtle to s, which should be one of “arrow”, “turtle”, “circle”, “square”, “triangle”, “classic”'
+    'Sets the shape of the turtle to s, which should be one of "arrow", "turtle", "circle", "square", "triangle", "classic"'
     t, s = env.stack.popN(2)
     t.val.shape(s.val)
     env.stack.push(t)
