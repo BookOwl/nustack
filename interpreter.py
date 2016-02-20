@@ -20,7 +20,8 @@ class Stack:
     def pop(self):
         if len(self) == 0:
             raise StackUnderflowError("Stack is empty!")
-        return self._stack.pop()
+        thing = self._stack.pop()
+        return thing
 
     def popN(self, n):
         pops = reversed([self.pop() for _ in range(n)])
@@ -105,6 +106,7 @@ class Interpreter:
         else:
             toks = code
         for tok in toks:
+            #print(tok)
             # Push any literals to the stack
             if tok.type.startswith("lit_"):
                 self.stack.push(tok)
