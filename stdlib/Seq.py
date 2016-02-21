@@ -102,3 +102,29 @@ def repeat(env) -> "(sequence1 i -- sequence2)":
     seq, i = env.stack.popN(2)
     newseq = seq.val * i.val
     env.stack.push(Token(seq.type, newseq))
+
+@module.register("pack2")
+def pack2(env) -> "(a1 a2 -- [a1 a2])":
+    "Creates a list from the top 2 items on the stack"
+    env.stack.push(Token("lit_list", list(env.stack.popN(2))))
+
+@module.register("pack3")
+def pack3(env) -> "(a1 a2 a3 -- [a1 a2 a3])":
+    "Creates a list from the top 3 items on the stack"
+    env.stack.push(Token("lit_list", list(env.stack.popN(3))))
+
+@module.register("pack.n")
+def packn(env) -> "(... i -- l)":
+    "Creates a list from the top i items on the stack not including i"
+    i = env.stack.pop().val
+    env.stack.push(Token("lit_list", list(env.stack.popN(i))))
+
+@module.register("unpack")
+def unpack(env) -> "(sequence -- a...)":
+    "Unpacks a sequence"
+    seq = env.stack.pop()
+    if seq.type == "lit_string":
+        seq = [Token("lit_string", c) for c in seq.val]
+    else:
+        seq = seq.val
+    env.stack.push(*seq)
