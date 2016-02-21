@@ -72,9 +72,10 @@ class Scope:
         return "Scope: %s" % repr(self._scopes)
 
 class Interpreter:
-    def __init__(self):
+    def __init__(self, argv=["<<INTERACTIVE>>"]):
         self._reset()
         self.file = os.path.abspath(os.curdir)
+        self.argv = [tokenize.Token("lit_string", arg) for arg in argv]
 
     def getDir(self):
         if '.' in os.path.basename(self.file):

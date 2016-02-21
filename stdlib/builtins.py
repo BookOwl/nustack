@@ -439,3 +439,9 @@ def import_(env) -> "(sym -- )":
                 m = importlib.import_module("nustack.stdlib.%s" % name)
         for (k,v) in m.module.contents.items():
             env.scope.assign(k,v)
+
+@module.register("argv")
+def argv(env) -> "( -- l)":
+    """Returns a list of the command line arguments passed to the program.
+    The first item is either the name of the program or <<INTERACTIVE>>"""
+    env.stack.push(env.argv[:])

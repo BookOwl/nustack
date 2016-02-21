@@ -17,12 +17,12 @@ Runs the code in the file "path" """
 if "-h" in sys.argv or "help" in sys.argv or "--help" in sys.argv:
     print(helptext, end="")
     sys.exit(1)
-elif len(sys.argv) == 2:
+elif len(sys.argv) >= 2:
     # Run code from a file
     fname = sys.argv[1]
     with open(fname) as f:
         code = f.read()
-    interp = nustack.interpreter.Interpreter()
+    interp = nustack.interpreter.Interpreter(sys.argv[1:])
     try:
         interp.run(code, file=fname)
     except KeyboardInterrupt:
