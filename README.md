@@ -88,6 +88,6 @@ done
 ```
 Here is a screenshot:
 
-![Screenshot](/screenshots/screenshot1.png|alt="Screenshot")
+![Screenshot](/screenshots/screenshot1.png)
 
 Both example programs can be found in the examples directory.
