@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Nustack by BookOwl</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Nustack</h1>
+          <h2>Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/BookOwl/nustack/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/BookOwl/nustack/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/BookOwl/nustack" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <p><a href="https://gitter.im/BookOwl/nustack?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/BookOwl/nustack.svg" alt="Join the chat at https://gitter.im/BookOwl/nustack"></a></p>
+
+<h1>
+<a id="nustack" class="anchor" href="#nustack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Nustack</h1>
+
+<p>Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.
+For an excellent introduction to concatenative programming, please see <a href="http://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matters.html?m=1">http://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matters.html?m=1</a></p>
+
+<h2>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing.</h2>
+
+<p>To install, clone this repository and put the contents in a folder called nustack that is on your module search path.</p>
+
+<p>Nustak is compatible with Python 3.</p>
+
+<h2>
+<a id="running" class="anchor" href="#running" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running</h2>
+
+<p>To run a Nustack program, just run the following command line: <code>python -m nustack path/to/program.nu</code></p>
+
+<p><code>python -m nustack</code> starts the Nustack interactive prompt.</p>
+
+<h2>
+<a id="help" class="anchor" href="#help" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Help</h2>
+
+<p>Currently, there is little documentation for Nustack, but I am working on it. For now, create an issue with your questions, ask on gitter, or post them in the <a href="https://scratch.mit.edu/discuss/topic/184118/">Nustack Scratch forum topic</a></p>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>Here is an example Nustack program:</p>
+
+<pre><code>/* examples/testprog.nu */
+`std::IO importext
+`std::Time importext
+`std::Control importext /* Import the IO, Time and Control modules */
+'file.txt' "r" IO::open IO::readall IO::close /*Open, read, and close the file 'file.txt' */
+show /*Show the contents of the file*/
+{ "spam" show /*Print spam*/
+  1 Time::sleep /*Pause for 1 second*/
+} `spam define
+{ spam } Control::forever
+</code></pre>
+
+<p>Here is a more complex example that draws a tree using the Turtle module:</p>
+
+<pre><code>/* turtle_tree.nu - A recursive tree drawn with turtle graphics. */
+/* Import the Seq and Turtle modules */
+`Seq import `Turtle import*
+
+/* Set up the turtle and the states list */
+Turtle `t define
+[] `states define
+
+/* Save the turtle's current state */
+{`tcopy def [tcopy get.pos rot get.dir swap drop] states swap Seq::append tcopy} `save.state define
+
+/* Set the turtle's state to the last one saved */
+{`tcopy def states Seq::pop `newstate def
+  tcopy pu
+  tcopy newstate 0 Seq::nth newstate 1 Seq::nth set.pos
+  tcopy newstate 2 Seq::nth  set.dir
+  tcopy pd
+  } `pop.state define
+
+/* Here is the tree function */
+{`angle def `d def `n def `t def /* Save our arguments */
+  n 0 eq /* Test if we have hit the base case */
+  {t "#0fd268" /*green*/ pencolor 10 dot "#4f3c0c" pencolor} /* If so, draw a leaf */
+  { /* Else, recursivly draw the rest of the tree */
+    t save.state
+    t n pensize
+    d fd
+    angle rt n 1 - d 0.7 * angle tree
+    t angle 2 * lt n 1 - d 0.7 * angle tree
+    t pop.state
+  }
+  if
+} `tree def
+
+/* Configure the screen */
+Screen ["Nustack Turtle Graphics - Recursive Tree" 600 500] config.screen
+/* Write some text */
+t pu -280 200 set.pos "Recursive Tree" 20 write
+
+/* Get the turtle ready to draw */
+t pu 0 -250 set.pos 90 set.dir pd
+t "#4f3c0c" /*brown*/ pencolor
+hide.turtle 0 speed /* 0 speed means no animation */
+
+/* Draw the tree. */
+"Turtle" "How many iterations?" number.input `iters def
+"Turtle" "What is the length of the first segment?" number.input `len def
+"Turtle" "What is the branching angle?" number.input `angle def
+t iters len angle tree
+/* Start the turtle mainloop so that our drawing stays on the screen. */
+done
+</code></pre>
+
+<p>Here is a screenshot:</p>
+
+<p><img src="https://github.com/BookOwl/nustack/raw/master/screenshots/screenshot1.png" alt="Screenshot"></p>
+
+<p>Both example programs can be found in the examples directory.</p>
+        </section>
+
+        <footer>
+          Nustack is maintained by <a href="https://github.com/BookOwl">BookOwl</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
