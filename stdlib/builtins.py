@@ -370,9 +370,8 @@ def do_while_(env) -> "(c c -- )":
             break
         env.eval(code.val)
 
-@module.register("import", "imp")
-def import_(env) -> "(sym -- )":
-    name = env.stack.pop().val
+def loadModule(env, name):
+    "Returns a module"
     curdir = env.getDir()
     if name.startswith("std::"):
         usestd = True
@@ -392,53 +391,38 @@ def import_(env) -> "(sym -- )":
         interp = nustack.interpreter.Interpreter()
         _, s = interp.run(code)
         scope = ScopeWrapper(s._scopes[0])
-        env.scope.assign(namesplit[0], namespaceWrapper(namesplit, scope))
+        return namesplit, scope
     except IOError as e:
         name = ".".join(namesplit)
         if usestd:
             m = importlib.import_module("nustack.stdlib.%s" % name)
         else:
             try:
-                m = importlib.import_module("nu_ext_" + name)
+                m = importlib.import_module("nu_ext.%s" % name )
             except ImportError:
-                m = importlib.import_module("nustack.stdlib.%s" % name)
-        env.scope.assign(namesplit[0],namespaceWrapper(namesplit, m.module))
+                try:
+                    m = importlib.import_module("nu_ext_%s" % name)
+                except ImportError:
+                    m = importlib.import_module("nustack.stdlib.%s" % name)
+            return namesplit, m.module
+
+@module.register("import", "imp")
+def import_(env) -> "(sym -- )":
+    name = env.stack.pop().val
+    namesplit, mod = loadModule(env, name)
+    env.scope.assign(namesplit[0], namespaceWrapper(namesplit,mod))
 
 @module.register("import*", "imp*")
 def import_(env) -> "(sym -- )":
     name = env.stack.pop().val
-    curdir = env.getDir()
-    if name.startswith("std::"):
-        usestd = True
-        name = name[5:]
+    namesplit, mod = loadModule(env, name)
+    if type(mod) == ScopeWrapper:
+        conts  = mod.scope
     else:
-        usestd = False
-    namesplit = name.split("::")
-    pth = "/".join(namesplit)
-    pth = os.path.join(curdir, pth) + ".nu"
-    try:
-        if not os.path.exists(pth) or usestd:
-            f = open(os.path.join(stddir, "/".join(namesplit)) + '.nu', "r")
-        else:
-            f = open(pth, "r")
-        code = f.read()
-        f.close()
-        interp = nustack.interpreter.Interpreter()
-        _, s = interp.run(code)
-        scope = s._scopes[0]
-        for (k,v) in scope.items():
-            env.scope.assign(k,v)
-    except IOError as e:
-        name = ".".join(namesplit)
-        if usestd:
-            m = importlib.import_module("nustack.stdlib.%s" % name)
-        else:
-            try:
-                m = importlib.import_module("nu_ext_" + name)
-            except ImportError:
-                m = importlib.import_module("nustack.stdlib.%s" % name)
-        for (k,v) in m.module.contents.items():
-            env.scope.assign(k,v)
+        conts = mod.contents
+    for (k,v) in conts.items():
+        env.scope.assign(k,v)
+
 
 @module.register("argv")
 def argv(env) -> "( -- l)":

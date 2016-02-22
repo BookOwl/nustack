@@ -25,5 +25,4 @@ def ctime(env) -> "(n -- s)":
 @module.register("timestr")
 def timestr(env) -> "( -- s)":
     "Returns a human readable time string"
-    n = env.stack.pop().val
     env.stack.push(Token("lit_string", time.ctime()))

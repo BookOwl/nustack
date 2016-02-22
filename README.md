@@ -7,7 +7,9 @@ For an excellent introduction to concatenative programming, please see http://ev
 ## Installing.
 To install, clone this repository and put the contents in a folder called nustack that is on your module search path.
 
-Nustak is compatible with Python 3.
+On Linux computers if you have git installed, you can install Nustack with `sudo git -C /usr/lib/python3.?/site-packages/ clone https://github.com/BookOwl/nustack.git` and you can upgrade with `(cd /usr/lib/python3.?/site-packages/nustack/ && sudo git pull)`
+
+Nustak has been tested on Python 3.2, 3.3, and 3.5, but should work with every Python 3 release except for maybe 3.0.
 ## Running
 To run a Nustack program, just run the following command line: `python -m nustack path/to/program.nu`
 

@@ -35,7 +35,8 @@ elif len(sys.argv) >= 2:
 else:
     print("Nustack v%s Interactive Prompt" % nustack.version)
     print("Running on Python %s" % sys.version)
-    print("Press Ctrl-Z + Enter to exit.\nPress Ctrl-C to stop any running code and go back to the prompt.")
+    print("Enter your EOF character to exit.")
+    print("Press Ctrl-C to stop any running code and go back to the prompt.")
     interp = nustack.interpreter.Interpreter()
     while True:
         try:
