@@ -165,6 +165,18 @@ def if_(env) -> "(b c c -- )":
         env.eval(t.val)
     else:
         env.eval(f.val)
+@module.register("cond")
+def cond_(env) -> "(l -- )":
+    """Takes a list of 2 item lists.
+    The first item must be a code object that is run to produce a boolean value.
+    If the result of running the first code object is `#t`, the second item in the list,
+    which must be a code object, is run."""
+    conds = env.stack.pop().val
+    for cond in conds:
+        env.eval(cond.val[0].val)
+        if env.stack.pop().val:
+            env.eval(cond.val[1].val)
+            break
 
 @module.register("define", "def")
 def define(env) -> "(a s -- )":
