@@ -40,7 +40,7 @@ def run(env) -> "(s1 -- l)":
 @module.register("run.shell")
 def run_shell(env) -> "(s1 -- l)":
     """Runs s1 as a shell command string and returns a two item list [return-code output]
-    Note that this run using the subprocess module with shell=True, which can be a security risc!"""
+    Note that this run using the subprocess module with shell=True, which can be a security risk!"""
     args = env.stack.pop().val
     args = shlex.split(args)
     try:
