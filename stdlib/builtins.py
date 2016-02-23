@@ -149,13 +149,13 @@ def not_(env) -> "(b1 -- b)":
 def or_(env) -> "(b1 b2 -- b)":
     "Returns true if b1 or b2 are true"
     b1, b2 = env.stack.popN(2)
-    env.stack.push(Token("lit_bool", b1.val or b2.val))
+    env.stack.push(Token("lit_any", b1.val or b2.val))
 
 @module.register("and", "&")
 def and_(env) -> "(b1 b2 -- b)":
     "Returns true if b1 and b2 are true"
     b1, b2 = env.stack.popN(2)
-    env.stack.push(Token("lit_bool", b1.val and b2.val))
+    env.stack.push(Token("lit_any", b1.val and b2.val))
 
 @module.register("if")
 def if_(env) -> "(b c c -- )":
