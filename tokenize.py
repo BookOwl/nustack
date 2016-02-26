@@ -70,6 +70,9 @@ class Token:
             return "`"  + self.val
         return repr(self.val)
 
+    def __iter__(self):
+        return iter(self.val)
+
 def tokenize(code):
     tokens = []
     while code:

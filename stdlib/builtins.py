@@ -40,7 +40,7 @@ def peek(env) -> "(a -- a)":
     "Shows the top of the stack without popping it."
     thing = env.stack.pop()
     if type(thing) != Token:
-        print(thing)
+        s = thing
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
     elif thing.type in ("lit_list", "lit_symbol"):
@@ -56,6 +56,7 @@ def showr(env) -> "(a -- a)":
     thing = env.stack.pop()
     if type(thing) != Token:
         print(thing)
+        return
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
     elif thing.type in ("lit_list", "lit_symbol"):
@@ -70,6 +71,8 @@ def peekr(env) -> "(a -- a)":
     thing = env.stack.pop()
     if type(thing) != Token:
         print(thing)
+        env.stack.push(thing)
+        return
     elif thing.type == "lit_bool":
         s = "#t" if thing.val else "#f"
     elif thing.type in ("lit_list", "lit_symbol"):
