@@ -444,3 +444,36 @@ def argv(env) -> "( -- l)":
     """Returns a list of the command line arguments passed to the program.
     The first item is either the name of the program or <<INTERACTIVE>>"""
     env.stack.push(env.argv[:])
+
+# Exception handling
+def getBaseNames(Cls):
+	return [Base.__name__ for Base in Cls.__mro__]
+
+def raisename(name, args):
+    ExcClass = type(name, (Exception,),  {})
+    raise ExcClass(args)
+
+@module.register("try")
+def try_(env):
+    tclause, eclauses = env.stack.popN(2)
+    try:
+        env.eval(tclause.val)
+    except BaseException as e:
+        bases = getBaseNames(e.__class__)
+        for (name, handler) in eclauses.val:
+            if name.val in bases:
+                env.stack.push(Token("lit_list", [Token("lit_any", val) for val in e.args]))
+                env.eval(handler.val)
+                break
+        else:
+            raise e
+
+@module.register("raise")
+def raise_(env):
+    excname = env.stack.pop().val
+    raisename(excname, "")
+
+@module.register("raise.details")
+def raise_details(env):
+    excname, excargs = env.stack.popN(2)
+    raisename(excname.val, excargs.val)
