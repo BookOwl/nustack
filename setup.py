@@ -1,13 +1,19 @@
 #!python3
-from setuptools import setup, find_packages
+from setuptools import setup
+desc = '''
+Nustack is a stack-oriented concatenative programming language
+with support for high-level modular programming and Python integration.
+
+For more info, please visit https://gitub.com/BookOwl/Nustack
+'''
 
 setup(
     name='nustack',
 
-    version="0.1.0",
+    version="0.9.0",
 
     description='Nustack programming langusge',
-    long_description="Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration",
+    long_description=desc,
 
     url='https://github.com/BookOwl/nustack',
 
@@ -32,5 +38,11 @@ setup(
 
     keywords='nustack programming language',
 
-    packages=find_packages()
+    packages=["nustack", "nustack.doc", "nustack.stdlib"],
+
+    entry_points={
+    'console_scripts': [
+        'nustack=nustack.__main__:main',
+        ],
+    },
 )
