@@ -34,6 +34,11 @@ def main():
             if input("Raise error? (y/n) ") in "yY":
                 raise
     else:
+        # import readline on *nix
+        try:
+            import readline
+        except ImportError:
+            pass
         print("Nustack v%s Interactive Prompt" % nustack.version)
         print("Running on Python %s" % sys.version)
         print("Enter your EOF character to exit.")
