@@ -10,7 +10,7 @@ For more info, please visit https://gitub.com/BookOwl/Nustack
 setup(
     name='nustack',
 
-    version="0.9.0",
+    version="0.9.1",
 
     description='Nustack programming langusge',
     long_description=desc,
