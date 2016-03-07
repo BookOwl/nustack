@@ -10,7 +10,7 @@ For more info, please visit https://gitub.com/BookOwl/Nustack
 setup(
     name='nustack',
 
-    version="0.9.1",
+    version="0.10.1",
 
     description='Nustack programming langusge',
     long_description=desc,
@@ -40,7 +40,7 @@ setup(
 
     packages=["nustack", "nustack.doc", "nustack.stdlib"],
 
-    install_requires=["requests>=2.8,<3",]
+    install_requires=["requests>=2.8,<3",],
 
     entry_points={
     'console_scripts': [
