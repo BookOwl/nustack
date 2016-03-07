@@ -12,6 +12,7 @@ class Module:
         def dec(f):
             for name in names:
                 self.contents[name] = f
+            f.nustack = True
             return f
         return dec
 

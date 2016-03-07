@@ -1,11 +1,18 @@
 #!python3
-import types, os
+import types, os, inspect
 from nustack import tokenize
 from nustack.stdlib import builtins
 
 class StackUnderflowError(Exception): pass
 class ScopeUnderflowError(Exception): pass
 class ScopeLookupError(Exception): pass
+
+def getnumargs(func):
+    if hasattr(inspect, "signature"):
+        sig = inspect.signature(func)
+        return len(sig.parameters)
+    else:
+        return len(inspect.getfullargspec(func).args)
 
 class Stack:
     def __init__(self, start=None):
@@ -24,6 +31,7 @@ class Stack:
         return thing
 
     def popN(self, n):
+        if n == 0: return ()
         pops = reversed([self.pop() for _ in range(n)])
         return tuple(pops)
 
@@ -72,6 +80,11 @@ class Scope:
         return "Scope: %s" % repr(self._scopes)
 
 class Interpreter:
+    FUNCTION_TYPES = (types.FunctionType,
+                      types.MethodType,
+                      types.BuiltinFunctionType,
+                      types.BuiltinMethodType)
+
     def __init__(self, argv=["<<INTERACTIVE>>"]):
         self._reset()
         self.file = os.path.abspath(os.curdir)
@@ -116,59 +129,66 @@ class Interpreter:
                 contents = []
                 while True:
                     thing = self.stack.pop()
-                    if thing.type == "lit_liststart":
+                    if hasattr(thing, "type") and thing.type == "lit_liststart":
                         break
                     contents.append(thing)
                 self.stack.push(tokenize.Token("lit_list", list(reversed(contents))))
             # "Call" something
             elif tok.type == "call":
-                # This is the tricky one
-                # First, if we are actually loading something from a module ("Mod::thing"), split it up around the "::"
-                if "::" in tok.val:
-                    valname = tok.val.split("::")
-                else:
-                    # Else, we are only getting the top-leval object
-                    valname = [tok.val]
-                # Now we locate it
-                try:
-                    # First, we try to look it up through the scpes
-                    val = self.scope.lookup(valname[0])
-                except ScopeLookupError:
-                    # If it's not defined by the program, it might be a builtin. If it's not, the builtins module will raise a NotDefinedError
-                    f = builtins.module.get(valname[0])
-                    f(self)
-                else:
-                    # The scope lookup completed without an error
-                    # If len(valname) > 1, we need to lookup any sub-modules
-                    if len(valname) > 1:
-                        # Lookup any sub-modules
-                        top = valname[0]
-                        valname = valname[1:]
-                        for name in valname:
-                            val = val.get(name)
-                        if type(val) == types.FunctionType:
-                            # If the final value is a function, we call it. This is how extension modules work
-                            val(self)
-                        elif type(val) == tokenize.Token and val.type == "lit_code":
-                            # We got a Nustack function, so we should call it.
-                            topscope = self.scope.getGlobal(top)
-                            self.scope.pushScope(topscope.scope)
-                            self.eval(val.val)
-                            self.scope.popScope()
-                        else:
-                            # Else, we got a iteral and we should push it on the stack
-                            self.stack.push(val)
-                    # Otherwise, we just directly handle the value
-                    elif type(val) == types.FunctionType:
-                        # If we get a python function, we need to call it.
-                        val(self)
-                    elif type(val) != tokenize.Token:
-                        self.stack.push(val)
-                    elif val.type != "lit_code":
-                        # If the value is not code, push it to the stack
-                        self.stack.push(val)
+                val = self.lookup(tok.val)
+                if type(val) in self.FUNCTION_TYPES:
+                    # If the final value is a function, we call it. This is how extension modules work
+                    self.call_external(val)
+                elif type(val) == tokenize.Token and val.type == "lit_code":
+                    # We got a Nustack function, so we should call it.
+                    namesplit = tok.val.split("::")
+                    if len(namesplit) > 1:
+                        newscope = self.scope.getGlobal(namesplit[0])
                     else:
-                        # Else, call it with a new scope.
-                        self.scope.pushScope()
-                        self.eval(val.val)
-                        self.scope.popScope()
+                        newscope = None
+                    self.scope.pushScope(newscope)
+                    self.eval(val.val)
+                    self.scope.popScope()
+                else:
+                    # Else, we got a literal and we should push it on the stack
+                    self.stack.push(val)
+
+    def lookup(self, name):
+        # First, if we are actually loading something from a module ("Mod::thing"), split it up around the "::"
+        if "::" in name:
+            valname = name.split("::")
+        else:
+            # Else, we are only getting the top-leval object
+            valname = [name]
+        try:
+            # First, we try to look it up through the scpes
+            if valname[0] != "":
+                val = self.scope.lookup(valname[0])
+            else:
+                val = self.stack.pop()
+        except ScopeLookupError:
+            # If it's not defined by the program, it might be a builtin. If it's not, the builtins module will raise a NotDefinedError
+            return builtins.module.get(valname[0])
+        else:
+            # The scope lookup completed without an error
+            # If len(valname) > 1, we need to lookup any sub-modules
+            if len(valname) > 1:
+                # Lookup any sub-modules
+                top = valname[0]
+                valname = valname[1:]
+                for name in valname:
+                    val = val.get(name)
+            return val
+
+    def call_external(self, val):
+        if hasattr(val, "nustack"):
+            # This function was marked by the extension module register, so call with the interpreter
+            val(self)
+        else:
+            numargs = getnumargs(val)
+            if type(val) in (types.MethodType, types.BuiltinMethodType):
+                numargs -= 1
+            func_args = [arg.val for arg in self.stack.popN(numargs)]
+            ret = val(*func_args)
+            tok = tokenize.Token("any", ret)
+            if ret is not None: self.stack.push(tok)

@@ -13,6 +13,10 @@ class ScopeWrapper:
         return self.scope[name]
     def __repr__(self):
         return "ScopeWrapper: " + repr(self.scope)
+    def __iter__(self):
+        return iter(self.scope)
+    def __getitem__(self, name):
+        return self.get(name)
 
 def namespaceWrapper(pth, scope):
     pth = reversed(pth[1:])
@@ -419,16 +423,16 @@ def loadModule(env, name):
                     m = importlib.import_module("nu_ext_%s" % name)
                 except ImportError:
                     m = importlib.import_module("nustack.stdlib.%s" % name)
-            return namesplit, m.module
+        return namesplit, m.module
 
 @module.register("import", "imp")
 def import_(env) -> "(sym -- )":
     name = env.stack.pop().val
     namesplit, mod = loadModule(env, name)
-    env.scope.assign(namesplit[0], namespaceWrapper(namesplit,mod))
+    env.scope.assign(namesplit[0], namespaceWrapper(namesplit, mod))
 
 @module.register("import*", "imp*")
-def import_(env) -> "(sym -- )":
+def import_all(env) -> "(sym -- )":
     name = env.stack.pop().val
     namesplit, mod = loadModule(env, name)
     if type(mod) == ScopeWrapper:
@@ -437,7 +441,6 @@ def import_(env) -> "(sym -- )":
         conts = mod.contents
     for (k,v) in conts.items():
         env.scope.assign(k,v)
-
 
 @module.register("argv")
 def argv(env) -> "( -- l)":
@@ -477,3 +480,18 @@ def raise_(env):
 def raise_details(env):
     excname, excargs = env.stack.popN(2)
     raisename(excname.val, excargs.val)
+
+@module.register("lookup")
+def lookup(env) -> "(sym -- any)":
+    "Returns the variable that has the name of sym's val. Useful for dynamic variable lookup"
+    name = env.stack.pop().val
+    env.stack.push(env.lookup(name))
+
+@module.register("call")
+def call(env) -> "(code -- )":
+    "Runs `code`, which can be either a code object or a python function"
+    code = env.stack.pop()
+    if type(code) in env.FUNCTION_TYPES:
+        env.call_external(code)
+    else:
+        env.eval(code.val)

@@ -37,7 +37,7 @@ def main():
         # import readline on *nix
         try:
             import readline
-        except ImportError:
+        except (ImportError, TypeError):
             pass
         print("Nustack v%s Interactive Prompt" % nustack.version)
         print("Running on Python %s" % sys.version)

@@ -40,6 +40,8 @@ setup(
 
     packages=["nustack", "nustack.doc", "nustack.stdlib"],
 
+    install_requires=["requests>=2.8,<3",]
+
     entry_points={
     'console_scripts': [
         'nustack=nustack.__main__:main',

@@ -73,6 +73,17 @@ class Token:
     def __iter__(self):
         return iter(self.val)
 
+    def get(self, attr):
+        val = getattr(self.val, attr)
+        if type(val) in (str, int, float, bool, bytes):
+            if type(val) in (str, bytes):
+                type_ = "lit_string"
+            else:
+                type_ = "lit_" + val.__class__.__name__
+            return Token(type_, val)
+        else:
+            return val
+
 def tokenize(code):
     tokens = []
     while code:
