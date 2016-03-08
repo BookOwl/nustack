@@ -1,36 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Nustack by BookOwl</title>
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <body>
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Nustack</title>
+  <meta name="description" content="Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Nustack</h1>
+    </header>
     <div id="container">
-      <div class="inner">
-
-        <header>
-          <h1>Nustack</h1>
-          <h2>Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.</h2>
-        </header>
-
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/BookOwl/nustack/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/BookOwl/nustack/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/BookOwl/nustack" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
+      <p class="tagline">Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/BookOwl/nustack/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/BookOwl/nustack/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/BookOwl/nustack" class="code">View Nustack on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
           <p><a href="https://gitter.im/BookOwl/nustack?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/BookOwl/nustack.svg" alt="Join the chat at https://gitter.im/BookOwl/nustack"></a></p>
 
 <h1>
@@ -42,16 +47,16 @@ For an excellent introduction to concatenative programming, please see <a href="
 <h2>
 <a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing.</h2>
 
-<p>To install, clone this repository and put the contents in a folder called nustack that is on your module search path.</p>
+<p>Run <code>pip install nustack</code></p>
 
-<p>Nustak is compatible with Python 3.</p>
+<p>Nustak has been tested on Python 3.2, 3.3, and 3.5, but should work with every Python 3 release except for maybe 3.0.</p>
 
 <h2>
 <a id="running" class="anchor" href="#running" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running</h2>
 
-<p>To run a Nustack program, just run the following command line: <code>python -m nustack path/to/program.nu</code></p>
+<p>To run a Nustack program, just run the following command line: <code>nustack path/to/program.nu</code></p>
 
-<p><code>python -m nustack</code> starts the Nustack interactive prompt.</p>
+<p><code>nustack</code> starts the Nustack interactive prompt.</p>
 
 <h2>
 <a id="help" class="anchor" href="#help" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Help</h2>
@@ -132,18 +137,29 @@ done
 
 <p>Here is a screenshot:</p>
 
-<p><img src="https://github.com/BookOwl/nustack/raw/master/screenshots/screenshot1.png" alt="Screenshot"></p>
+<p><img src="https://raw.githubusercontent.com/BookOwl/nustack/master/screenshots/screenshot1.png" alt="Screenshot"></p>
 
 <p>Both example programs can be found in the examples directory.</p>
-        </section>
-
-        <footer>
-          Nustack is maintained by <a href="https://github.com/BookOwl">BookOwl</a><br>
-          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
+        </article>
       </div>
     </div>
-  </body>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/BookOwl" class="avatar"><img src="https://avatars0.githubusercontent.com/u/13385064?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/BookOwl">BookOwl</a> maintains <a href="https://github.com/BookOwl/nustack">Nustack</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/BookOwl/nustack/tarball/master" class="tar">tar</a><a href="https://github.com/BookOwl/nustack/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
 </html>
