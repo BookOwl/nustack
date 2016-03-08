@@ -1,12 +1,12 @@
 #!python3
 import os, glob, sys
 import nustack
-import nustack.doc.gen as gen
+import gen
 
 exportdir = sys.argv[1]
 
 # Get module names
-path = os.path.join(os.path.dirname(nustack.__file__), "stdlib")
+path = os.path.join(nustack.__path__[0], "stdlib")
 print("Path to standard library:", path)
 os.chdir(path)
 modnames = (f[:-3] for f in glob.iglob("*.py") if f != '__init__.py')
