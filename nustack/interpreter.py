@@ -184,15 +184,14 @@ class Interpreter:
     def call_external(self, val):
         if hasattr(val, "nustack"):
             # This function was marked by the extension module register, so call with the interpreter
-            log("calling registered func", val)
+            log("call_extenal: calling registered function", val)
             val(self)
         else:
             numargs = getnumargs(val)
-            log("num args", numargs)
-            #if type(val) in (types.MethodType, types.BuiltinMethodType):
-            #    numargs -= 1
+            log("call_extenal: calling unregisted function", val)
+            log("call_extenal: num args", numargs)
             func_args = [arg.val for arg in self.stack.popN(numargs)]
-            log("func args", func_args)
+            log("call_extenal: function args", func_args)
             ret = val(*func_args)
             tok = tokenize.Token("any", ret)
             if ret is not None: self.stack.push(tok)
