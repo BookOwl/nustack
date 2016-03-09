@@ -45,3 +45,15 @@ def replace(env) -> "(s1 s2 s3 -- s4)":
     s1, s2, s3 = env.stack.popN(3)
     s4 = s1.val.replace(s2.val, s3.val)
     env.stack.push(strtok(s4))
+
+@module.register("to.bytes")
+def to_bytes(env) -> "(string encoding -- bytes)":
+    "Converts `string` to bytes using the encoding `encoding`"
+    s, enc = env.stack.popN(2)
+    env.stack.push(Token("lit_bytes", s.val.encode(enc.val)))
+
+@module.register("to.string")
+def to_bytes(env) -> "(bytes encoding -- string)":
+    "Converts `bytes` to a string using the encoding `encoding`"
+    b, enc = env.stack.popN(2)
+    env.stack.push(Token("lit_string", b.val.decode(enc.val)))
