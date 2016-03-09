@@ -98,6 +98,7 @@ def tokenize(code):
         symbolmatch = SYMBOL.match(code)
         callmatch = CALL.match(code)
         if commentmatch:
+            log("Parsing: Found comment/whitespace")
             commentend = commentmatch.span()[1]
             code = code[commentend:]
         elif intmatch:
@@ -106,12 +107,14 @@ def tokenize(code):
             n = int(n)
             tokens.append(Token("lit_int", n))
             code = code[span:]
+            log("Parsing: Found int", n)
         elif floatmatch:
             span = floatmatch.span()[1]
             n = code[:span]
             n = float(n)
             tokens.append(Token("lit_float", n))
             code = code[span:]
+            log("Parsing: Found float", n)
         elif boolmatch:
             span = boolmatch.span()[1]
             b = code[:span]
@@ -121,27 +124,33 @@ def tokenize(code):
                 bool = False
             code = code[span:]
             tokens.append(Token("lit_bool", bool))
+            log("Parsing: Found bool", b)
         elif stringmatch:
             span = stringmatch.span()[1]
             s = code[:span]
             s = addescapes(s)
             tokens.append(Token("lit_string", s[1:-1]))
             code = code[span:]
+            log("Parsing: Found string", s[1:-1])
         elif bytematch:
             span = bytematch.span()[1]
             s = code[:span]
             s = addescapes(s)
             tokens.append(Token("lit_bytes", bytes(s[2:-1], "utf8")))
             code = code[span:]
+            log("Parsing: Found bytes", bytes(s[2:-1], "utf8"))
         elif code[0] == "[":
             tokens.append(Token("lit_liststart","["))
             code = code[1:]
+            log("Parsing: Found list start")
         elif code[0] == "]":
             tokens.append(Token("listend", "]"))
             code = code[1:]
+            log("Parsing: Found list end")
         elif code[0] == "{":
             tokens.append(Token("codestart", "{"))
             code = code[1:]
+            log("Parsing: Found code start")
         elif code[0] == "}":
             subcode = []
             while True:
@@ -151,16 +160,19 @@ def tokenize(code):
                 subcode.append(t)
             tokens.append(Token("lit_code", list(reversed(subcode))))
             code = code[1:]
+            log("Parsing: Found code end")
         elif callmatch:
             span = callmatch.span()[1]
             sym = code[:span]
             code = code[span:]
             tokens.append(Token("call", sym))
+            log("Parsing: Found call", sym)
         elif symbolmatch:
             span = symbolmatch.span()[1]
             sym = code[1:span]
             code = code[span:]
             tokens.append(Token("lit_symbol", sym))
+            log("Parsing: Found symbol", sym)
         else:
             print(code)
             raise TokenizeError("Can not find a token!")
