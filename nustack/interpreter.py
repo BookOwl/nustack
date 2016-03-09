@@ -1,6 +1,7 @@
 #!python3
 import types, os, inspect
 from nustack import tokenize
+from nustack.utils import log
 from nustack.stdlib import builtins
 
 class StackUnderflowError(Exception): pass
@@ -183,12 +184,15 @@ class Interpreter:
     def call_external(self, val):
         if hasattr(val, "nustack"):
             # This function was marked by the extension module register, so call with the interpreter
+            log("calling registered func", val)
             val(self)
         else:
             numargs = getnumargs(val)
-            if type(val) in (types.MethodType, types.BuiltinMethodType):
-                numargs -= 1
+            log("num args", numargs)
+            #if type(val) in (types.MethodType, types.BuiltinMethodType):
+            #    numargs -= 1
             func_args = [arg.val for arg in self.stack.popN(numargs)]
+            log("func args", func_args)
             ret = val(*func_args)
             tok = tokenize.Token("any", ret)
             if ret is not None: self.stack.push(tok)

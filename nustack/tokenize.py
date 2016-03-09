@@ -1,13 +1,15 @@
 #!python3
 # Nustack tokenizer/parser
 
+from nustack.utils import log
 import re, pprint
 LEGAL_IDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-./:;<=>?@\\^_|~'
-COMMENT = re.compile(r"(?:/\*.+?\*/)|(?:[ \t\n\r\x0b\x0c]+)", re.DOTALL)
+COMMENT = re.compile(r"(?:/\*.+?\*/)|(?:[ \t\n\r\x0b\x0c]+)|(?://.+?$)", re.DOTALL)
 INT     = re.compile(r"(?:-)?\d+(?!\.)")
 FLOAT   = re.compile(r"(?:-)?\d*\.\d+")
 BOOL    = re.compile("#t|#f")
 STRING  = re.compile(r"('.*?(?<!\\)')|(\".*?(?<!\\)\")")
+BYTE    = re.compile(r"b(('.*?(?<!\\)')|(\".*?(?<!\\)\"))")
 SYMBOL  = re.compile(r"`[%s]+" % LEGAL_IDS)
 CALL    = re.compile(r"[%s]+" % LEGAL_IDS)
 
@@ -92,6 +94,7 @@ def tokenize(code):
         floatmatch = FLOAT.match(code)
         boolmatch = BOOL.match(code)
         stringmatch = STRING.match(code)
+        bytematch = BYTE.match(code)
         symbolmatch = SYMBOL.match(code)
         callmatch = CALL.match(code)
         if commentmatch:
@@ -123,6 +126,12 @@ def tokenize(code):
             s = code[:span]
             s = addescapes(s)
             tokens.append(Token("lit_string", s[1:-1]))
+            code = code[span:]
+        elif bytematch:
+            span = bytematch.span()[1]
+            s = code[:span]
+            s = addescapes(s)
+            tokens.append(Token("lit_bytes", bytes(s[2:-1], "utf8")))
             code = code[span:]
         elif code[0] == "[":
             tokens.append(Token("lit_liststart","["))

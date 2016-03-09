@@ -2,7 +2,10 @@
 # Nustack main entry point
 
 import nustack
+from nustack import utils
 import sys, imp, os
+
+utils.config_logging(on=True)
 
 helptext = """Usage:
 python -m nustack
