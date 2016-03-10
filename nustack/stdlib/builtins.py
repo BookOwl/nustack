@@ -4,6 +4,7 @@ import os
 import importlib
 from nustack.extensionbase import Module, Token
 import nustack.interpreter
+from nustack.utils import log
 import nustack.stdlib; stddir = os.path.dirname(nustack.stdlib.__file__); del nustack.stdlib
 
 class ScopeWrapper:
@@ -389,6 +390,11 @@ def do_while_(env) -> "(c c -- )":
             break
         env.eval(code.val)
 
+def getsearchpath(env):
+    nupath = os.environ.get("NUSTACKPATH", "").split(os.path.pathsep)
+    nupath.insert(0, env.getDir())
+    return [path.strip().rstrip(os.path.sep) for path in nupath if path]
+
 def loadModule(env, name):
     "Returns a module"
     curdir = env.getDir()
@@ -398,31 +404,47 @@ def loadModule(env, name):
     else:
         usestd = False
     namesplit = name.split("::")
-    pth = "/".join(namesplit)
-    pth = os.path.join(curdir, pth) + ".nu"
     try:
-        if not os.path.exists(pth) or usestd:
-            f = open(os.path.join(stddir, "/".join(namesplit)) + '.nu', "r")
-        else:
-            f = open(pth, "r")
-        code = f.read()
-        f.close()
-        interp = nustack.interpreter.Interpreter()
-        _, s = interp.run(code)
-        scope = ScopeWrapper(s._scopes[0])
-        return namesplit, scope
-    except IOError as e:
+        if usestd:
+            log("loadModule: Force loading stdlib", os.path.join(stddir, *namesplit) + ".nu")
+            f = open(os.path.join(stddir, *namesplit) + '.nu', "r")
+            code = f.read()
+            f.close()
+            interp = nustack.interpreter.Interpreter()
+            _, s = interp.run(code)
+            scope = ScopeWrapper(s._scopes[0])
+            return namesplit, scope
+        nupath = getsearchpath(env)
+        log("loadModule: Module Search Path =", nupath)
+        for pth in nupath:
+            pth = os.path.join(pth, *namesplit) + ".nu"
+            log("loadModule: Trying to load", pth)
+            if os.path.exists(pth):
+                f = open(pth, "r")
+                code = f.read()
+                f.close()
+                interp = nustack.interpreter.Interpreter()
+                _, s = interp.run(code)
+                scope = ScopeWrapper(s._scopes[0])
+                return namesplit, scope
+        raise IOError()
+    except IOError:
+        log("loadModule: Couldn't find nustack module, trying extensions...")
         name = ".".join(namesplit)
         if usestd:
             m = importlib.import_module("nustack.stdlib.%s" % name)
+            log("loadModule: Force loading stdlib", name)
         else:
             try:
                 m = importlib.import_module("nu_ext.%s" % name )
+                log("loadModule: Loading extension module", name, "in nu_ext package")
             except ImportError:
                 try:
                     m = importlib.import_module("nu_ext_%s" % name)
+                    log("loadModule: Loading extension module", name, "with nu_ext prefix")
                 except ImportError:
                     m = importlib.import_module("nustack.stdlib.%s" % name)
+                    log("loadModule: Loading stdlib", name)
         return namesplit, m.module
 
 @module.register("import", "imp")
