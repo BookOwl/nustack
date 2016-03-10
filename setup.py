@@ -10,7 +10,7 @@ For more info, please visit https://gitub.com/BookOwl/Nustack
 setup(
     name='nustack',
 
-    version="0.11.0alpha",
+    version="0.11.0",
 
     description='Nustack programming langusge',
     long_description=desc,
@@ -30,6 +30,7 @@ setup(
         'License :: OSI Approved :: MIT License',
 
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
