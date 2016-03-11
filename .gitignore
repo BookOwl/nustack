@@ -45,6 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# My files
 # pyc files
 *.pyc
 __pycache__
@@ -54,3 +56,5 @@ doc\__pycache__
 build
 dist
 nustack.egg-info
+# py.test files
+.cache
