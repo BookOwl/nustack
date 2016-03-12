@@ -3,7 +3,7 @@
 
 from nustack.utils import log
 import re, pprint
-LEGAL_IDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-./:;<=>?@\\^_|~'
+LEGAL_IDS = re.escape(r'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-./:;<=>?@\^_|~')
 COMMENT = re.compile(r"(?:/\*.+?\*/)|(?:[ \t\n\r\x0b\x0c]+)|(?://.+?$)", re.DOTALL)
 INT     = re.compile(r"(?:-)?\d+(?!\.)")
 FLOAT   = re.compile(r"(?:-)?\d*\.\d+")
@@ -60,7 +60,7 @@ class Token:
         return eq
 
     def __hash__(self):
-        return hash(self.type) & hash(tuple(self.val))
+        return hash(self.type) & hash((self.val, ))
 
     def detailstr(self):
          return "Token(type=%s, val=%s)" % (repr(self.type), repr(self.val),)
