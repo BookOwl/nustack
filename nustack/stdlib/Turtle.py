@@ -71,14 +71,14 @@ def pu(env) -> "(turtle -- turtle)":
     env.stack.push(t)
 
 @module.register("pensize")
-def lt(env) -> "(turtle n -- turtle)":
+def pensize(env) -> "(turtle n -- turtle)":
     "Sets the turtle's pensize to n"
     t, n = env.stack.popN(2)
     t.val.pensize(n.val)
     env.stack.push(t)
 
 @module.register("pencolor")
-def lt(env) -> "(turtle a -- turtle)":
+def pencolor(env) -> "(turtle a -- turtle)":
     "Sets the turtle's pensize to a, which is a 3 item list or a string"
     t, color = env.stack.popN(2)
     if color.type == 'lit_list':
@@ -158,14 +158,14 @@ def clear(env) -> "(turtle -- turtle)":
     env.stack.push(t)
 
 @module.register("set.shape")
-def speed(env) -> "(turtle s -- turtle)":
+def set_shape(env) -> "(turtle s -- turtle)":
     'Sets the shape of the turtle to s, which should be one of "arrow", "turtle", "circle", "square", "triangle", "classic"'
     t, s = env.stack.popN(2)
     t.val.shape(s.val)
     env.stack.push(t)
 
 @module.register("turtle.size")
-def speed(env) -> "(turtle n -- turtle)":
+def turtle_size(env) -> "(turtle n -- turtle)":
     "Sets the sizeof the turtle to n"
     t, n = env.stack.popN(2)
     t.val.turtlesize(n.val)
@@ -181,7 +181,7 @@ def on_click(env) -> "(turtle c i -- turtle)":
     t.val.onclick(callback, i.val)
 
 @module.register("on.screen.click")
-def on_click(env) -> "(turtle c i -- turtle)":
+def on_screen_click(env) -> "(turtle c i -- turtle)":
     "Runs the code object when ever the screene is clicked with the mouse button given by i"
     screen, c, i = env.stack.popN(3)
     def callback(x, y):
