@@ -1,4 +1,4 @@
-[![Join the chat at https://gitter.im/BookOwl/nustack](https://badges.gitter.im/BookOwl/nustack.svg)](https://gitter.im/BookOwl/nustack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/BookOwl/nustack.svg?branch=tests)](https://travis-ci.org/BookOwl/nustack)
+[![Join the chat at https://gitter.im/BookOwl/nustack](https://badges.gitter.im/BookOwl/nustack.svg)](https://gitter.im/BookOwl/nustack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/BookOwl/nustack.svg?branch=tests)](https://travis-ci.org/BookOwl/nustack) [![Codacy Badge](https://api.codacy.com/project/badge/grade/41debe98009e4455bdd96eb20b6606f8)](https://www.codacy.com/app/stanleybookowl/nustack)
 
 # Nustack
 Nustack is a stack-oriented concatenative programming language with support for high-level modular programming and Python integration.
@@ -7,11 +7,13 @@ For an excellent introduction to concatenative programming, please see http://ev
 ## Installing.
 Run `pip install nustack`
 
-Nustak has been tested on Python 3.2, 3.3, and 3.5, but should work with every Python 3 release except for maybe 3.0.
+Nustak has been tested on Pythons 3.2-3.5, 3.6-nightly, and PyPy3 but should also work Python 3.1
 ## Running
 To run a Nustack program, just run the following command line: `nustack path/to/program.nu`
 
 `nustack` starts the Nustack interactive prompt.
+
+For a full lists of options, run `nustack -h`
 
 ## Help
 Currently, there is little documentation for Nustack, but I am working on it. For now, create an issue with your questions, ask on gitter, or post them in the [Nustack Scratch forum topic](https://scratch.mit.edu/discuss/topic/184118/)
