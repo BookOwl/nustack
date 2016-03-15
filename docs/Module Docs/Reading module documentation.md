@@ -14,7 +14,7 @@ This description is actually quite simple. The first line gives the name of the 
 A stack effect is a simple description of what a word does to the stack. For example, the stack effect `(n -- s)` means that a number (an integer or float) is popped off the stack and a string is pushed onto the stack. Here is a complete table of most stack effect symbols and what they mean:
 
 | Symbol  | Meaning |
----------------------
+|---------|---------|
 | i   | An integer |
 | f   | A float |
 | n   | An int or a float
